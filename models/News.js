@@ -3,17 +3,13 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var NewsSchema = new Schema({
-  headline: {
-    type: String,
-    required: true
+  title: {
+    type: String
+    // required: true
   },
-  summary: {
-    type: String,
-    required: true
-  },
-  url: {
-    type: String,
-    required: true
+  link: {
+    type: String
+    // required: true
   }
 });
 

@@ -37,21 +37,30 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 app.get("/scrape", function(req, res) {
-    axios.get("https://nytimes.com/").then(function(response) {
+    axios.get("https://old.reddit.com/r/webdev").then(function(response) {
         var $ = cheerio.load(response.data);
 
         $("article.css-8atqhb").each(function(i, element) {
             var result = {};
 
-            result.headline = $(this)
-                .children("a")
-                .text();
-            result.summary = $(this)
-                .children("a")
-                .text();
-            result.url = $(this)
-                .children("a")
-                .attr("href")
+            var title = $(element).text();
+
+            var link = $(element).children().attr("href");
+
+            // result.headline = $(this)
+            //     .children("a")
+            //     .text();
+            // result.summary = $(this)
+            //     .children("a")
+            //     .text();
+            // result.url = $(this)
+            //     .children("a")
+            //     .attr("href");
+
+            result.push({
+                title: title,
+                link: link,
+            });
 
             db.News.create(result)
                 .then(function(dbNews) {
