@@ -1,0 +1,19 @@
+body {
+    background-color: lightgoldenrodyellow;
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+    box-align: center;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+header {
+    padding: 20px;
+    box-align: center;
+    text-align: center;
+}
