@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 var Schema = mongoose.Schema;
 
-var NewsSchema = new Schema({
+var newsSchema = new Schema({
   title: {
     type: String
     // required: true
@@ -14,7 +14,7 @@ var NewsSchema = new Schema({
 });
 
 // This creates our model from the above schema, using mongoose's model method
-var News = mongoose.model("News", NewsSchema);
+var News = mongoose.model("News", newsSchema);
 
 // Export the Article model
 module.exports = News;

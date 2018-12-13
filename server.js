@@ -1,5 +1,6 @@
 var express = require("express");
 var mongoose = require("mongoose");
+var logger = require("morgan");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
@@ -10,7 +11,7 @@ var PORT = process.env.PORT || 3000;
 
 var app = express();
 
-
+app.use(logger("dev"));
 // Parse request body as JSON
 app.use(express.urlencoded({
     extended: true
@@ -31,21 +32,24 @@ app.set("view engine", "handlebars");
 
 
 // Mongo -- Mongoose
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-mongoose.connect(MONGODB_URI);
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/news";
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 
 // Routes
 app.get("/scrape", function(req, res) {
-    axios.get("https://old.reddit.com/r/webdev").then(function(response) {
+    axios.get("http://www.echojs.com/").then(function(response) {
         var $ = cheerio.load(response.data);
 
-        $("article.css-8atqhb").each(function(i, element) {
+        $("article h2").each(function(i, element) {
             var result = {};
 
-            var title = $(element).text();
-
-            var link = $(element).children().attr("href");
+            result.title = $(this)
+                .children("a")
+                .text();
+            result.link = $(this)
+                .children("a")
+                .attr("href");
 
             // result.headline = $(this)
             //     .children("a")
@@ -56,11 +60,6 @@ app.get("/scrape", function(req, res) {
             // result.url = $(this)
             //     .children("a")
             //     .attr("href");
-
-            result.push({
-                title: title,
-                link: link,
-            });
 
             db.News.create(result)
                 .then(function(dbNews) {
@@ -78,6 +77,17 @@ app.get("/articles", function(req, res) {
     db.News.find({})
         .then(function(dbNews) {
             res.json(dbNews);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+});
+
+app.get("/", function(req, res) {
+    db.News.find({})
+        .then(function(dbNews) {
+            res.json(dbNews);
+            res.render("index", dbNews);
         })
         .catch(function(err) {
             res.json(err);
