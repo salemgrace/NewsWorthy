@@ -86,7 +86,7 @@ app.get("/articles", function(req, res) {
 app.get("/", function(req, res) {
     db.News.find({})
         .then(function(dbNews) {
-            console.log(dbNews);
+            console.log("testing news", dbNews);
             res.render("index", dbNews);
         })
         .catch(function(err) {
