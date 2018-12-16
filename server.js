@@ -11,6 +11,8 @@ var PORT = process.env.PORT || 3000;
 
 var app = express();
 
+var routes = require("./routes");
+
 app.use(logger("dev"));
 // Parse request body as JSON
 app.use(express.urlencoded({
@@ -32,68 +34,10 @@ app.set("view engine", "handlebars");
 
 
 // Mongo -- Mongoose
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/news";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/NPRnews";
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 
-// Routes
-app.get("/scrape", function(req, res) {
-    axios.get("http://www.echojs.com/").then(function(response) {
-        var $ = cheerio.load(response.data);
-
-        $("article h2").each(function(i, element) {
-            var result = {};
-
-            result.title = $(this)
-                .children("a")
-                .text();
-            result.link = $(this)
-                .children("a")
-                .attr("href");
-
-            // result.headline = $(this)
-            //     .children("a")
-            //     .text();
-            // result.summary = $(this)
-            //     .children("a")
-            //     .text();
-            // result.url = $(this)
-            //     .children("a")
-            //     .attr("href");
-
-            db.News.create(result)
-                .then(function(dbNews) {
-                    console.log(dbNews);
-                })
-                .catch(function(err) {
-                    return res.json(err);
-                });
-        });
-        res.send("Scrape Complete!")
-    });
-});
-
-app.get("/articles", function(req, res) {
-    db.News.find({})
-        .then(function(dbNews) {
-            res.json(dbNews);
-        })
-        .catch(function(err) {
-            res.json(err);
-        });
-});
-
-app.get("/", function(req, res) {
-    db.News.find({})
-        .then(function(dbNews) {
-            console.log("testing news", dbNews);
-            res.render("index", dbNews);
-        })
-        .catch(function(err) {
-            res.json(err);
-        });
-});
-
 app.listen(PORT, function () {
-    console.log("App running on port " + PORT + "!");
+    console.log("App running on port " + PORT);
 });
